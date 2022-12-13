@@ -1,0 +1,76 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+    id      String   @id @default(auto()) @map("_id") @db.ObjectId 
+  name           String? 
+  handle         String  @unique
+  email          String  @unique 
+  hashedPassword String
+
+  memberships Membership[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Domain {
+  domain String @id @map("_id")
+
+  isValid Boolean // This boolean should be true if a cronjob monitors that the domain points to our app address
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String
+}
+
+model Organization {
+    id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String?     
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  memberships Membership[]
+  domain      Domain[]
+  blogposts    Blogpost[]
+}
+
+model Membership {
+    id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  role MembershipRole
+
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String
+  user           User         @relation(fields: [userId], references: [id])
+  userId         String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, organizationId])
+}
+
+model Blogpost {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+
+  title String
+  body  String
+
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String
+}
+
+enum MembershipRole {
+  OWNER
+  MEMBER
+}
