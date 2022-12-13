@@ -1,8 +1,15 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+[How to set host](https://phoenixnap.com/kb/how-to-edit-hosts-file-in-windows-mac-or-linux)
 ## Getting Started
-
-First, run the development server:
+```bash
+yarn
+```
+RUn prisma studio
+```bash
+yarn prisma studio
+```
+run the development server:
 
 ```bash
 npm run dev
